@@ -117,7 +117,7 @@ ENV LANG=C.UTF-8 \
 RUN useradd --user-group -d ${SUPERSET_HOME} -m --no-log-init --shell /bin/bash superset
 
 # Some bash scripts needed throughout the layers
-COPY --chown=superset:superset --chmod=555 docker/*.sh /app/docker/
+COPY --chown=superset:superset --chmod=755 docker/*.sh /app/docker/
 
 RUN pip install --no-cache-dir --upgrade uv
 
@@ -160,7 +160,7 @@ RUN if [ "$BUILD_TRANSLATIONS" = "true" ]; then \
 ######################################################################
 FROM python-base AS python-common
 # Copy the entrypoints, make them executable in userspace
-COPY --chown=superset:superset --chmod=555 docker/entrypoints /app/docker/entrypoints
+COPY --chown=superset:superset --chmod=755 docker/entrypoints /app/docker/entrypoints
 
 WORKDIR /app
 # Set up necessary directories and user
@@ -180,7 +180,8 @@ COPY superset-frontend/package.json superset-frontend/
 COPY scripts/check-env.py scripts/
 
 # keeping for backward compatibility
-COPY --chmod=755 ./docker/entrypoints/run-server.sh /usr/bin/
+COPY --chown=superset:superset --chmod=755 ./docker/entrypoints/run-server.sh /usr/bin/
+RUN chmod 755 /usr/bin
 
 # Some debian libs
 RUN /app/docker/apt-install.sh \
